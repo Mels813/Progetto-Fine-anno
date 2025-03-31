@@ -1,14 +1,14 @@
 public class Persona{
-    private Strng nome;
+    private String nome;
     private String email;
     private String telefono;
-    private String pasword;
+    private String password;
 
-    public Persona(String nome, String email, String telefono, String pasword) {
+    public Persona(String nome, String email, String telefono, String password){
         this.nome = nome;
         this.email = email;
-        this.telefone = telefono;
-        this.pasword = pasword;
+        this.telefono = telefono;
+        this.password = password;
     }
 
     //getter
@@ -21,8 +21,8 @@ public class Persona{
     public String getTelefono() {
         return telefono;
     }
-    public String getPasword() {
-        return pasword;
+    public String getPassword() {
+        return password;
     }
 
     //setter
@@ -35,8 +35,8 @@ public class Persona{
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
-    public void setPasword(String pasword) {
-        this.pasword = pasword;
+    public void setPasword(String password) {
+        this.password = password;
     }
 
     //metodi
@@ -44,6 +44,6 @@ public class Persona{
     
 
     public String toString() {
-        return "Nome: " + nome + ", Email: " + email + ", Telefono: " + telefono + ", Password: " + pasword;
+        return "Nome: " + nome + ", Email: " + email + ", Telefono: " + telefono + ", Password: " + password;
     }
 }
