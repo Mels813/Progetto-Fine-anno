@@ -1,23 +1,18 @@
-public class Cliente extends Persona{
-   private String street;
-   private float saldo;
-   private String city;
-   private int n;
+/*
+ * Classe per rappresentare clienti e ristoranti
+ */
 
-    Cliente(String name, String email, String pswrd, String phone, String street, int n, String city){
-        super(name,email,phone,pswrd);
-        this.street = street;
-        this.saldo = 0f;
-        this.city = city;
-        this.n = n;
+public class Cliente extends User{
+   private String street;
+   private String address;
+
+    Cliente(String name, String email, String pswrd, String phone, float saldo, String address, String city){
+        super(name,email,phone,pswrd,saldo);
+        this.address = address;
     }
 
     String getStreet(){
         return street;
-    }
-
-    int getN(){
-        return n;
     }
 
     String getName(){
@@ -27,18 +22,9 @@ public class Cliente extends Persona{
     String getMail(){
         return super.getEmail();
     }
-    float getSaldo(){
-        return saldo;
-    }
-    void setSaldo(float saldo){
-        this.saldo = saldo;
-    }
-    String getCity(){
-        return city;
-    }
 
-    @Override
-    public String toString(){
-        return super.toString()+" indirizzo: "+street+" "+n+" citta': "+city;
+    
+    String getAddress(){
+        return address;
     }
 }
