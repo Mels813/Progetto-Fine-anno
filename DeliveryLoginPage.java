@@ -3,8 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class LoginPage {
-    public LoginPage(JFrame frame) {
+public class DeliveryLoginPage {
+    public DeliveryLoginPage(JFrame frame) {
         /*JFrame frame = new JFrame("Login Page");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 700); // Increased frame size/* */
@@ -115,7 +115,7 @@ public class LoginPage {
             public void actionPerformed(ActionEvent e) {
                 // Open the sign-up page when the button is clicked
                 frame.getContentPane().removeAll();
-                new SignUp(frame); // Assuming you have a SignUpPage class
+                new DeliverySignUp(frame); // Assuming you have a SignUpPage class
                 frame.revalidate();
                 frame.repaint();
             }

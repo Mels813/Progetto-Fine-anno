@@ -1,15 +1,13 @@
 import java.awt.*;
 import javax.swing.*;
 
-public class HomePage extends JFrame {
-    JFrame frame;
+public class HomePage extends JPanel{
     JPanel northPanel;
     JPanel panel1;
     JPanel totalPanel;
     JPanel btnPanel;
 
-    HomePage() {
-        frame = new JFrame("Home Page");
+    HomePage(JFrame frame){
 
         // Pannel North
         northPanel = new JPanel();
@@ -19,37 +17,6 @@ public class HomePage extends JFrame {
         totalPanel.setBackground(new Color(255, 132, 0));
         totalPanel.setLayout(new BorderLayout());
 
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.setBackground(new Color(255, 132, 0));
-
-        JMenu fileMenu = new JMenu("File");
-        fileMenu.setFont(new Font("Serif", Font.ITALIC, 20));
-        fileMenu.setForeground(Color.BLACK);
-
-        JMenu helpMenu = new JMenu("Home");
-        helpMenu.setFont(new Font("Serif", Font.ITALIC, 20));
-        helpMenu.setForeground(Color.BLACK);
-
-        JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.setFont(new Font("Arial", Font.PLAIN, 15));
-        exitItem.setForeground(Color.BLACK);
-        fileMenu.addActionListener(e -> System.exit(0));
-
-        JMenuItem aboutItem = new JMenuItem("Version");
-        aboutItem.setFont(new Font("Arial", Font.PLAIN, 15));
-        aboutItem.setForeground(Color.BLACK);
-        aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(frame, "HomePage Application v1.0"));
-
-        fileMenu.add(exitItem);
-        helpMenu.add(aboutItem);
-
-        menuBar.add(fileMenu);
-        menuBar.add(helpMenu);
-
-        frame.setJMenuBar(menuBar);
-
-        menuBar.setBorder(BorderFactory.createEmptyBorder());
-
         northPanel.setLayout(new BorderLayout());
         northPanel.setBackground(new Color(255, 132, 0));
 
@@ -57,11 +24,11 @@ public class HomePage extends JFrame {
         panel1.setBackground(new Color(255, 132, 0));
         JLabel loginLabel = new JLabel("Home Page", SwingConstants.CENTER);
         loginLabel.setForeground(Color.BLACK);
-        loginLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        loginLabel.setFont(new Font("Arial", Font.BOLD, 60));
 
         JLabel nameLabel = new JLabel("SanPaolo GO", SwingConstants.CENTER);
         nameLabel.setForeground(Color.BLACK);
-        nameLabel.setFont(new Font("TimesRoman", Font.PLAIN, 18));
+        nameLabel.setFont(new Font("TimesRoman", Font.PLAIN, 100));
 
         panel1.add(nameLabel);
         // Gradient effect from orange to white
@@ -120,20 +87,41 @@ public class HomePage extends JFrame {
 
         // Ristorante Button
         JButton ristoranteButton = new GradientButton("Ristorante", new Color(255, 132, 0), Color.WHITE);
+        ristoranteButton.setBorder(null);
         btnPanel.add(ristoranteButton);
 
         // Delivery Button
         JButton deliveryButton = new GradientButton("Delivery", new Color(255, 132, 0), Color.WHITE);
+        deliveryButton.setBorder(null);
         btnPanel.add(deliveryButton);
 
         // User Button
-        JButton userButton = new GradientButton("Login", new Color(255, 132, 0), Color.WHITE);
+        JButton userButton = new GradientButton("Client", new Color(255, 132, 0), Color.WHITE);
+        userButton.setBorder(null);
         btnPanel.add(userButton);
+
+        ristoranteButton.addActionListener(e -> {
+            // Open the delivery page when the button is clicked
+            frame.getContentPane().removeAll(); // Remove all components from the frame
+            new LoginPage(frame); // Assuming DeliveryPage is another class for the delivery screen
+            frame.revalidate();
+            frame.repaint();
+        });
+
+        deliveryButton.addActionListener(e -> {
+            // Open the login page when the button is clicked
+            frame.getContentPane().removeAll(); // Remove all components from the frame
+            new DeliveryLoginPage(frame);
+            frame.revalidate();
+            frame.repaint();
+        });
 
         userButton.addActionListener(e -> {
             // Open the login page when the button is clicked
-            new LoginPage();
-            frame.dispose(); // Close the home page
+            frame.getContentPane().removeAll(); // Remove all components from the frame
+            new LoginPage(frame);
+            frame.revalidate();
+            frame.repaint();
         });
 
         // Add padding around the buttons
@@ -143,9 +131,6 @@ public class HomePage extends JFrame {
         totalPanel.add(northPanel, BorderLayout.NORTH);
         totalPanel.add(btnPanel, BorderLayout.CENTER);
         frame.add(totalPanel);
-        frame.setSize(900, 700);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
     }
 }
 
