@@ -34,6 +34,7 @@ public class MenuUtente extends JPanel {
 
         // Aggiungiamo l'azione per il pulsante "Ristoranti"
         btnRistoranti.addActionListener(e -> {
+            ArrayList<Restaurant>restaurants = new ArrayList<>();
             if (ristorantiVisibili) {
                 System.out.println("Tornando al menu iniziale...");
                 tornaAlMenuIniziale();
