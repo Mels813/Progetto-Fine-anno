@@ -2,35 +2,31 @@ package org.example;
 
 import java.util.ArrayList;
 
-public class Consegna {
-    private Cliente cliente;
-    private Restaurant ristorante;
-    private boolean consegnata = false;
-    private double totale;
+public class Consegna{
+    private String rsName;
+    private float cost;
+    private ArrayList<Prodotto> cart;
 
 
-    public Consegna(Cliente cliente, Restaurant ristorante, double totale) {
-        this.cliente = cliente;
-        this.ristorante = ristorante;
-        this.totale = totale;
-        this.consegnata = false;
+    public Consegna(String rsName, float cost){
+        this.rsName = rsName;
+        this.cost = cost;
+        this.cart = new ArrayList<>();
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public String getRsName(){
+        return rsName;
+    }
+    public float getCost(){
+        return cost;
     }
 
-    public Restaurant getRistorante() {
-        return ristorante;
+    public void addProduct(Prodotto pd){
+        cart.add(pd);
     }
 
-
-    public void setConsegnata(boolean consegnata) {
-        this.consegnata = consegnata;
-    }
-
-    public double getTotale() {
-        return totale;
+    public Prodotto getProduct(int i){
+        return cart.get(i);
     }
 }
 
