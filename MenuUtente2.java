@@ -2,18 +2,22 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class MenuUtente2 extends JPanel {
+public class MenuUtente2 extends JPanel{
     private JPanel menuLaterale;
     private boolean menuVisibile = false;
     private JButton btnUtente = new JButton("☰");
     private JPanel pannelloContenuti = new JPanel(new BorderLayout());
     private boolean ristorantiVisibili = false;
     private Delivery delivery;
+    private Cliente cliente;
 
-    public MenuUtente2(JFrame frame, Cliente c, ArrayList<Restaurant> listaRistoranti, Delivery delivery) {
+    public MenuUtente2(JFrame frame, Cliente c, ArrayList<Restaurant> listaRistoranti, Delivery delivery, String url, String user, String password) {
         this.delivery = delivery;
+        this.cliente = c;
         setLayout(new BorderLayout());
 
         // Menu laterale
@@ -29,21 +33,15 @@ public class MenuUtente2 extends JPanel {
         JButton btnRistoranti = new JButton("🍽️ Ristoranti");
 
         // Azioni dei pulsanti
-        btnRistoranti.addActionListener(e -> {
-            if (ristorantiVisibili) {
-                tornaAlMenuIniziale();
-            } else {
-                mostraRistoranti(listaRistoranti);
-            }
-        });
+        btnRistoranti.addActionListener(e -> mostraRistoranti(listaRistoranti,url,user,password));
 
-        btnCarrello.addActionListener(e -> mostraCarrello());
+        btnCarrello.addActionListener(e -> mostraCarrello(url, user, password));
 
         // Azione per il pulsante "👤 Area Personale"
-        btnProfilo.addActionListener(e -> mostraAreaPersonale(c));
+        btnProfilo.addActionListener(e -> mostraAreaPersonale(c,url,user,password));
 
         // Azione per il pulsante "🚚 Consegne"
-        btnConsegne.addActionListener(e -> mostraConsegne());
+        btnConsegne.addActionListener(e -> mostraConsegne(c.getConsegne(url,user,password)));
 
         // Aggiungi i pulsanti al menu
         menuLaterale.add(btnProfilo);
@@ -74,146 +72,19 @@ public class MenuUtente2 extends JPanel {
         frame.add(this);
     }
 
-    public void mostraAreaPersonale(Cliente cliente) {
+    public void mostraAreaPersonale(Cliente cliente, String url, String user, String password){
         pannelloContenuti.removeAll();
 
-        // Crea il pannello principale con un layout BoxLayout per allineare verticalmente i pannelli
-        JPanel areaPersonalePanel = new JPanel();
-        areaPersonalePanel.setLayout(new BoxLayout(areaPersonalePanel, BoxLayout.Y_AXIS));
+        pannelloContenuti.setLayout(new GridLayout(7,1));
 
-        // Crea il pannello per ogni campo con tasto "Modifica"
-        JPanel pannelloNome = new JPanel();
-        pannelloNome.setLayout(new BoxLayout(pannelloNome, BoxLayout.X_AXIS)); // Allineamento orizzontale
-        JLabel lblNome = new JLabel("Nome: ");
-        JLabel lblNomeValore = new JLabel(cliente.getNome());
-        JButton btnModificaNome = new JButton("Modifica");
-        btnModificaNome.addActionListener(e -> {
-            String nuovoNome = JOptionPane.showInputDialog(null, "Modifica Nome", cliente.getNome());
-            if (nuovoNome != null && !nuovoNome.isEmpty()) {
-                lblNomeValore.setText(nuovoNome);
-                cliente.setNome(nuovoNome); // Aggiorna il cliente
-            }
-        });
-        pannelloNome.add(lblNome);
-        pannelloNome.add(lblNomeValore);
-        pannelloNome.add(Box.createHorizontalStrut(10)); // Spazio tra il valore e il pulsante
-        pannelloNome.add(btnModificaNome);
+        pannelloContenuti.add(new customerLabel("nome",cliente.getNome(),cliente,url,user,password));
+        pannelloContenuti.add(new customerLabel("mail",cliente.getMail(),cliente,url,user,password));
+        pannelloContenuti.add(new customerLabel("password",cliente.getMail(),cliente,url,user,password));
+        pannelloContenuti.add(new customerLabel("numero di telefono",cliente.getTelefono(),cliente,url,user,password));
+        pannelloContenuti.add(new customerLabel("citta'",cliente.getCity(),cliente,url,user,password));
+        pannelloContenuti.add(new customerLabel("indirizzo",cliente.getAddress(),cliente,url,user,password));
+        pannelloContenuti.add(new customerLabel("saldo",String.valueOf(cliente.getSaldo()),cliente,url,user,password));
 
-        JPanel pannelloEmail = new JPanel();
-        pannelloEmail.setLayout(new BoxLayout(pannelloEmail, BoxLayout.X_AXIS));
-        JLabel lblEmail = new JLabel("Email: ");
-        JLabel lblEmailValore = new JLabel(cliente.getEmail());
-        JButton btnModificaEmail = new JButton("Modifica");
-        btnModificaEmail.addActionListener(e -> {
-            String nuovaEmail = JOptionPane.showInputDialog(null, "Modifica Email", cliente.getEmail());
-            if (nuovaEmail != null && !nuovaEmail.isEmpty()) {
-                lblEmailValore.setText(nuovaEmail);
-                cliente.setEmail(nuovaEmail); // Aggiorna il cliente
-            }
-        });
-        pannelloEmail.add(lblEmail);
-        pannelloEmail.add(lblEmailValore);
-        pannelloEmail.add(Box.createHorizontalStrut(10));
-        pannelloEmail.add(btnModificaEmail);
-
-        JPanel pannelloTelefono = new JPanel();
-        pannelloTelefono.setLayout(new BoxLayout(pannelloTelefono, BoxLayout.X_AXIS));
-        JLabel lblTelefono = new JLabel("Telefono: ");
-        JLabel lblTelefonoValore = new JLabel(cliente.getTelefono());
-        JButton btnModificaTelefono = new JButton("Modifica");
-        btnModificaTelefono.addActionListener(e -> {
-            String nuovoTelefono = JOptionPane.showInputDialog(null, "Modifica Telefono", cliente.getTelefono());
-            if (nuovoTelefono != null && !nuovoTelefono.isEmpty()) {
-                lblTelefonoValore.setText(nuovoTelefono);
-                cliente.setTelefono(nuovoTelefono); // Aggiorna il cliente
-            }
-        });
-        pannelloTelefono.add(lblTelefono);
-        pannelloTelefono.add(lblTelefonoValore);
-        pannelloTelefono.add(Box.createHorizontalStrut(10));
-        pannelloTelefono.add(btnModificaTelefono);
-
-        JPanel pannelloPassword = new JPanel();
-        pannelloPassword.setLayout(new BoxLayout(pannelloPassword, BoxLayout.X_AXIS));
-        JLabel lblPassword = new JLabel("Password: ");
-        JLabel lblPasswordValore = new JLabel(cliente.getPassword());
-        JButton btnModificaPassword = new JButton("Modifica");
-        btnModificaPassword.addActionListener(e -> {
-            String nuovaPassword = JOptionPane.showInputDialog(null, "Modifica Password", cliente.getPassword());
-            if (nuovaPassword != null && !nuovaPassword.isEmpty()) {
-                lblPasswordValore.setText(nuovaPassword);
-                cliente.setPasword(nuovaPassword); // Aggiorna il cliente
-            }
-        });
-        pannelloPassword.add(lblPassword);
-        pannelloPassword.add(lblPasswordValore);
-        pannelloPassword.add(Box.createHorizontalStrut(10));
-        pannelloPassword.add(btnModificaPassword);
-
-        JPanel pannelloSaldo = new JPanel();
-        pannelloSaldo.setLayout(new BoxLayout(pannelloSaldo, BoxLayout.X_AXIS));
-        JLabel lblSaldo = new JLabel("Saldo: ");
-        JLabel lblSaldoValore = new JLabel(cliente.getSaldo() + "€");
-        JButton btnModificaSaldo = new JButton("Modifica");
-        btnModificaSaldo.addActionListener(e -> {
-            String nuovoSaldo = JOptionPane.showInputDialog(null, "Modifica Saldo", cliente.getSaldo());
-            if (nuovoSaldo != null && !nuovoSaldo.isEmpty()) {
-                lblSaldoValore.setText(nuovoSaldo + "€");
-                cliente.setSaldo(Float.parseFloat(nuovoSaldo)); // Aggiorna il cliente
-            }
-        });
-        pannelloSaldo.add(lblSaldo);
-        pannelloSaldo.add(lblSaldoValore);
-        pannelloSaldo.add(Box.createHorizontalStrut(10));
-        pannelloSaldo.add(btnModificaSaldo);
-
-        JPanel pannelloIndirizzo = new JPanel();
-        pannelloIndirizzo.setLayout(new BoxLayout(pannelloIndirizzo, BoxLayout.X_AXIS));
-        JLabel lblIndirizzo = new JLabel("Indirizzo: ");
-        JLabel lblIndirizzoValore = new JLabel(cliente.getAddress());
-        JButton btnModificaIndirizzo = new JButton("Modifica");
-        btnModificaIndirizzo.addActionListener(e -> {
-            String nuovoIndirizzo = JOptionPane.showInputDialog(null, "Modifica Indirizzo", cliente.getAddress());
-            if (nuovoIndirizzo != null && !nuovoIndirizzo.isEmpty()) {
-                lblIndirizzoValore.setText(nuovoIndirizzo);
-                cliente.setAddress(nuovoIndirizzo); // Aggiorna il cliente
-            }
-        });
-        pannelloIndirizzo.add(lblIndirizzo);
-        pannelloIndirizzo.add(lblIndirizzoValore);
-        pannelloIndirizzo.add(Box.createHorizontalStrut(10));
-        pannelloIndirizzo.add(btnModificaIndirizzo);
-
-        JPanel pannelloCitta = new JPanel();
-        pannelloCitta.setLayout(new BoxLayout(pannelloCitta, BoxLayout.X_AXIS));
-        JLabel lblCitta = new JLabel("Città: ");
-        JLabel lblCittaValore = new JLabel(cliente.getCity());
-        JButton btnModificaCitta = new JButton("Modifica");
-        btnModificaCitta.addActionListener(e -> {
-            String nuovaCitta = JOptionPane.showInputDialog(null, "Modifica Città", cliente.getCity());
-            if (nuovaCitta != null && !nuovaCitta.isEmpty()) {
-                lblCittaValore.setText(nuovaCitta);
-                cliente.setCity(nuovaCitta); // Aggiorna il cliente
-            }
-        });
-        pannelloCitta.add(lblCitta);
-        pannelloCitta.add(lblCittaValore);
-        pannelloCitta.add(Box.createHorizontalStrut(10));
-        pannelloCitta.add(btnModificaCitta);
-
-        // Aggiungi tutti i pannelli al pannello principale
-        areaPersonalePanel.add(pannelloNome);
-        areaPersonalePanel.add(pannelloEmail);
-        areaPersonalePanel.add(pannelloTelefono);
-        areaPersonalePanel.add(pannelloPassword);
-        areaPersonalePanel.add(pannelloSaldo);
-        areaPersonalePanel.add(pannelloIndirizzo);
-        areaPersonalePanel.add(pannelloCitta);
-
-        // Aggiungi il pannello al contenitore principale
-        pannelloContenuti.add(areaPersonalePanel, BorderLayout.CENTER);
-
-        // Rende visibile il pannello
         pannelloContenuti.revalidate();
         pannelloContenuti.repaint();
     }
@@ -228,7 +99,7 @@ public class MenuUtente2 extends JPanel {
         return label;
     }
 
-    public void mostraRistoranti(ArrayList<Restaurant> lista) {
+    public void mostraRistoranti(ArrayList<Restaurant> lista, String url, String user, String password) {
         pannelloContenuti.removeAll();
 
         JPanel centro = new JPanel();
@@ -248,7 +119,9 @@ public class MenuUtente2 extends JPanel {
 
             JButton menuButton = new JButton("Menu");
             menuButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            menuButton.addActionListener(e -> mostraMenuRistorante(r));
+
+            //mostra del menu' del ristorante quando si preme il bottone
+            menuButton.addActionListener(e -> mostraMenuRistorante(r.getProducts(url, user, password)));
 
             restaurantPanel.add(nome);
             restaurantPanel.add(Box.createVerticalStrut(5));
@@ -260,7 +133,6 @@ public class MenuUtente2 extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(centro);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(700, 500));
 
         pannelloContenuti.add(scrollPane, BorderLayout.CENTER);
         pannelloContenuti.revalidate();
@@ -268,7 +140,7 @@ public class MenuUtente2 extends JPanel {
         ristorantiVisibili = true;
     }
 
-    private void mostraMenuRistorante(Restaurant r) {
+    private void mostraMenuRistorante(ArrayList<Prodotto> products) {
         pannelloContenuti.removeAll();
 
         JPanel menuPanel = new JPanel(new BorderLayout());
@@ -279,34 +151,34 @@ public class MenuUtente2 extends JPanel {
         JPanel textAndButtonsPanel = new JPanel();
         textAndButtonsPanel.setLayout(new BoxLayout(textAndButtonsPanel, BoxLayout.Y_AXIS));
 
-        for (Prodotto prodotto : r.getMenu()) {
+        for (Prodotto pd : products) {
             JPanel prodottoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            JLabel nomeProdotto = new JLabel(prodotto.getNomeProd() + " - " + prodotto.getPrezzo() + "€");
+            JLabel nomeProdotto = new JLabel(pd.getNomeProd() + " - " + pd.getPrezzo() + "€");
 
             JButton btnDettagli = new JButton("Dettagli");
             btnDettagli.addActionListener(e -> {
                 JOptionPane.showMessageDialog(this,
-                        "Categoria: " + prodotto.getCategoria() +
-                                "\nDescrizione: " + prodotto.getDescrizione(),
+                        "Categoria: " + pd.getCategoria() +
+                                "\nDescrizione: " + pd.getDescrizione(),
                         "Dettagli Prodotto",
                         JOptionPane.INFORMATION_MESSAGE);
             });
 
             JButton btnAggiungi = new JButton("+");
             JButton btnRimuovi = new JButton("-");
-            JLabel quantitàLabel = new JLabel("Quantità: " + prodotto.getQuantity());
+            JLabel quantitàLabel = new JLabel("Quantità: " + pd.getQuantity());
 
             btnAggiungi.addActionListener(e -> {
-                if (delivery.addProduct(prodotto)) {
-                    quantitàLabel.setText("Quantità: " + prodotto.getQuantity());
+                if (delivery.addProduct(pd)) {
+                    quantitàLabel.setText("Quantità: " + pd.getQuantity());
                 } else {
                     JOptionPane.showMessageDialog(this, "Non puoi aggiungere prodotti da ristoranti diversi.", "Errore", JOptionPane.WARNING_MESSAGE);
                 }
             });
 
             btnRimuovi.addActionListener(e -> {
-                delivery.removeProduct(prodotto);
-                quantitàLabel.setText("Quantità: " + prodotto.getQuantity());
+                delivery.removeProduct(pd);
+                quantitàLabel.setText("Quantità: " + pd.getQuantity());
             });
 
             prodottoPanel.add(nomeProdotto);
@@ -326,7 +198,7 @@ public class MenuUtente2 extends JPanel {
         pannelloContenuti.repaint();
     }
 
-    private void mostraCarrello() {
+    private void mostraCarrello(String url, String user, String password){
         pannelloContenuti.removeAll(); // Rimuove tutto dal pannello contenitore per aggiornare la vista
 
         JPanel carrelloPanel = new JPanel();
@@ -339,7 +211,8 @@ public class MenuUtente2 extends JPanel {
             JLabel messaggio = new JLabel("Il tuo carrello è vuoto.", SwingConstants.CENTER);
             messaggio.setFont(new Font("Arial", Font.ITALIC, 18));
             carrelloPanel.add(messaggio);
-        } else {
+        }
+        else{
             // Aggiungi ogni prodotto al pannello
             for (Prodotto p : delivery.getCart()) {
                 JPanel prodottoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -355,7 +228,7 @@ public class MenuUtente2 extends JPanel {
                 JButton btnRimuovi = new JButton("-");
                 btnRimuovi.addActionListener(e -> {
                     delivery.removeProduct(p);  // Rimuove il prodotto dal carrello
-                    mostraCarrello();  // Rende di nuovo visibile il carrello aggiornato
+                    mostraCarrello(url, user, password);  // Rende di nuovo visibile il carrello aggiornato
                 });
 
                 // Aggiungi il nome, la quantità e il bottone al pannello del prodotto
@@ -380,12 +253,33 @@ public class MenuUtente2 extends JPanel {
             btnOrdina.setAlignmentX(Component.CENTER_ALIGNMENT);
             btnOrdina.addActionListener(e -> {
                 // Conferma dell'ordine
-                if (delivery.getProducts() > 0) {
-                    delivery.confermaOrdine();  // Conferma l'ordine
-                    mostraCarrello();  // Rende visibile l'aggiornamento del carrello
-                    mostraConsegne();  // Mostra l'aggiornamento delle consegne
-                    JOptionPane.showMessageDialog(null, "Ordine confermato!");  // Messaggio di conferma
-                } else {
+                if (delivery.getProducts()>0){
+                    if(cliente.getSaldo()<delivery.sumCart()){
+                        JOptionPane.showInputDialog(null,"saldo insufficiente per pagare il conto");
+                    }
+                    else{
+                        int tmp = delivery.findRider(url, user, password);
+                        //controllo ricerca del rider
+                        switch(tmp){
+                            case -1:
+                                JOptionPane.showMessageDialog(null,"errore di comunicazione");
+                                break;
+                            case 0:
+                                JOptionPane.showMessageDialog(null,"nessun rider disponibile per effettuare la consegna");
+                                break;
+                            case 1:
+                                //pagamento del servizio
+                                delivery.payService(url,user,password);
+
+                                //aggiunta della delivery al database
+                                delivery.addDeliverytoDB(url,user,password);
+                                JOptionPane.showMessageDialog(null,"consegna completata con successo");
+                                delivery.clearCart();   //eliminazione di tutti i prodotti dal carrello
+                                break;
+                        }
+                    }
+                }
+                else{
                     JOptionPane.showMessageDialog(null, "Il carrello è vuoto!");
                 }
             });
@@ -399,57 +293,68 @@ public class MenuUtente2 extends JPanel {
         pannelloContenuti.repaint();    // Rende visibile il carrello aggiornato
     }
 
-    private void mostraConsegne() {
+    private void mostraConsegne(ArrayList<Consegna> consegne){
         pannelloContenuti.removeAll();
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
-        panel.setBackground(Color.WHITE);
-
-        JLabel titolo = new JLabel("Storico Consegne");
-        titolo.setFont(new Font("Arial", Font.BOLD, 22));
-        titolo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(titolo);
-        panel.add(Box.createVerticalStrut(20));
-
-        ArrayList<Consegna> listaConsegne = delivery.getConsegne();
-
-        if (listaConsegne.isEmpty()) {
-            JLabel nessuna = new JLabel("Nessuna consegna effettuata.");
-            nessuna.setFont(new Font("Arial", Font.ITALIC, 18));
-            nessuna.setAlignmentX(Component.CENTER_ALIGNMENT);
-            panel.add(nessuna);
-        } else {
-            for (Consegna c : listaConsegne) {
-                JPanel consegnaPanel = new JPanel(new GridLayout(2, 1));
-                consegnaPanel.setBackground(new Color(245, 245, 245));
-                consegnaPanel.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(Color.GRAY),
-                        BorderFactory.createEmptyBorder(10, 10, 10, 10)
-                ));
-
-                JLabel ristorante = new JLabel("Ristorante: " + c.getRistorante());
-                JLabel totale = new JLabel("Totale: " + String.format("%.2f", c.getTotale()) + "€");
-
-                ristorante.setFont(new Font("Arial", Font.BOLD, 16));
-                totale.setFont(new Font("Arial", Font.PLAIN, 14));
+        if(consegne.isEmpty()){
+            JLabel emptyLabel = new JLabel("non ci sono consegne in attesa");
+            pannelloContenuti.add(emptyLabel);
+        }
+        else{
+            JPanel scrollPanel = new JPanel();
+            JLabel title = new JLabel("storico consegne");
+            pannelloContenuti.add(title);
+            for(Consegna c : consegne){
+                JPanel orderPanel = new JPanel();
+                JPanel headPanel = new JPanel();
+                JPanel contentPanel = new JPanel();
+                JPanel btnPanel = new JPanel();
+                headPanel.setLayout(new GridLayout(1,3));
+                contentPanel.setLayout(new GridLayout(1,3));
+                orderPanel.setLayout(new GridLayout(3,1));
 
 
-                consegnaPanel.add(ristorante);
-                consegnaPanel.add(totale);
+                //aggiunta titoli
+                headPanel.add(new JLabel("ordine"));
+                headPanel.add(new JLabel("ristornate"));
+                headPanel.add(new JLabel("costo"));
+
+                //aggiunta content
+                contentPanel.add(new JLabel(String.valueOf(c.getId())));
+                contentPanel.add(new JLabel(c.getRsName()));
+                contentPanel.add(new JLabel(String.valueOf(c.getCost())));
+
+                //aggiunta bottone
+                JButton detailsBtn = new JButton("dettagli");
+                btnPanel.add(detailsBtn);
+
+                //aggiunta pannelli secondari al principale
+                orderPanel.add(headPanel);
+                orderPanel.add(contentPanel);
+                orderPanel.add(detailsBtn);
 
 
-                panel.add(consegnaPanel);
-                panel.add(Box.createVerticalStrut(15));
+                //popup con tutti i prodotti quando viene premuto il bottone
+                detailsBtn.addActionListener(new ActionListener(){
+                    @Override
+                    public void actionPerformed(ActionEvent e){
+                        String details = "";
+                        for(int i=0;i<c.getLength();i++){
+                            details += "\n"+c.getProduct(i).getNomeProd()+" x"+c.getProduct(i).getQuantity();
+                        }
+                        JOptionPane.showMessageDialog(pannelloContenuti,details);
+                    }
+                });
+
+                //aggiunta pannello allo scroll pane
+                scrollPanel.add(orderPanel);
             }
+            pannelloContenuti.add(new JScrollPane(scrollPanel),BorderLayout.CENTER);
         }
 
-        pannelloContenuti.add(new JScrollPane(panel), BorderLayout.CENTER);
+        //aggiornamento frame
         pannelloContenuti.revalidate();
         pannelloContenuti.repaint();
     }
-
 
 
     private void tornaAlMenuIniziale() {
@@ -461,28 +366,4 @@ public class MenuUtente2 extends JPanel {
         pannelloContenuti.repaint();
         ristorantiVisibili = false;
     }
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        ArrayList<Restaurant> lista = new ArrayList<>();
-
-        Restaurant r1 = new Restaurant("Risto Roma", "", "", "", 0, "", "");
-        r1.addProdotto(new Prodotto("Carbonara", 12.5, "Primo", "Piatto tipico romano", r1));
-        r1.addProdotto(new Prodotto("Amatriciana", 12.5, "Primo", "Pasta con guanciale e pomodoro", r1));
-
-        Restaurant r2 = new Restaurant("Pizza Milano", "", "", "", 0, "", "");
-        r2.addProdotto(new Prodotto("Pizza Margherita", 8.0, "Pizza", "Pomodoro, mozzarella, basilico", r2));
-        r2.addProdotto(new Prodotto("Pizza Diavola", 9.0, "Pizza", "Salame piccante, mozzarella", r2));
-
-        lista.add(r1);
-        lista.add(r2);
-
-        Cliente c = new Cliente("Mario Rossi", "mario@mail.com", "password", "3330001111", 344, "address", "city");
-        Delivery d = new Delivery(c);
-
-        frame.setSize(900, 700);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        new MenuUtente2(frame, c, lista, d);
-        frame.setVisible(true);
-    }
-    }
+}
